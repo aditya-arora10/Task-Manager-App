@@ -2,6 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL; // ✅ added
+
 export default function Signup() {
   const [data, setData] = useState({
     name: "",
@@ -15,7 +17,7 @@ export default function Signup() {
   const signup = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/signup",
+        `${API}/api/auth/signup`, // ✅ updated
         data
       );
 
@@ -53,13 +55,11 @@ export default function Signup() {
           <option value="Admin">Admin</option>
         </select>
 
-        {/* 🔥 ADMIN SECRET */}
         {data.role === "Admin" && (
           <input placeholder="Admin Secret"
             onChange={e => setData({ ...data, adminSecret: e.target.value })} />
         )}
 
-        {/* 🔥 TEAM CODE */}
         {data.role === "Member" && (
           <input placeholder="Enter Team Code"
             onChange={e => setData({ ...data, teamCode: e.target.value })} />

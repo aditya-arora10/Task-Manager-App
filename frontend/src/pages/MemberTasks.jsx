@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL; // ✅ added
+
 export default function MemberTasks() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -11,7 +13,7 @@ export default function MemberTasks() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/tasks/member/${id}`, {
+    axios.get(`${API}/api/tasks/member/${id}`, { // ✅ updated
       headers: { Authorization: token }
     })
     .then(res => setTasks(res.data))

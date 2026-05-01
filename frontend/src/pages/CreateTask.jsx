@@ -2,13 +2,15 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL; // ✅ ADD THIS
+
 export default function CreateTask() {
   const [title, setTitle] = useState("");
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
   const [selectedMember, setSelectedMember] = useState("");
-  const [dueDate, setDueDate] = useState(""); // 🔥 NEW
+  const [dueDate, setDueDate] = useState("");
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -30,11 +32,11 @@ export default function CreateTask() {
   useEffect(() => {
     const headers = { Authorization: token };
 
-    axios.get("http://localhost:5000/api/projects", { headers })
+    axios.get(`${API}/api/projects`, { headers })
       .then(res => setProjects(res.data))
       .catch(() => alert("Failed to load projects"));
 
-    axios.get("http://localhost:5000/api/users/members", { headers })
+    axios.get(`${API}/api/users/members`, { headers })
       .then(res => setMembers(res.data))
       .catch(() => alert("Failed to load members"));
 
@@ -48,7 +50,7 @@ export default function CreateTask() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/tasks",
+        `${API}/api/tasks`,
         {
           title,
           project: selectedProject,
@@ -70,7 +72,6 @@ export default function CreateTask() {
     <div className="container">
       <h2>Create Task</h2>
 
-      {/* TITLE */}
       <input
         placeholder="Task Title"
         value={title}
@@ -79,7 +80,6 @@ export default function CreateTask() {
 
       <br /><br />
 
-      {/* PROJECT */}
       <select
         value={selectedProject}
         onChange={e => setSelectedProject(e.target.value)}
@@ -94,7 +94,6 @@ export default function CreateTask() {
 
       <br /><br />
 
-      {/* MEMBER */}
       <select
         value={selectedMember}
         onChange={e => setSelectedMember(e.target.value)}
@@ -109,7 +108,6 @@ export default function CreateTask() {
 
       <br /><br />
 
-      {/* 🔥 DEADLINE */}
       <input
         type="date"
         value={dueDate}

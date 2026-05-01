@@ -3,6 +3,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Login() {
+
+  const API = import.meta.env.VITE_API_URL; // ✅ MOVE INSIDE COMPONENT
+
+  console.log("API URL:", API); // ✅ for testing (optional)
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,7 +17,7 @@ export default function Login() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${API}/api/auth/login`, {
         email: email.trim(),
         password: password.trim()
       });

@@ -2,6 +2,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL; // ✅ added
+
 export default function Projects() {
   const [name, setName] = useState("");
   const [projects, setProjects] = useState([]);
@@ -33,9 +35,9 @@ export default function Projects() {
   const fetchProjects = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/projects",
+        `${API}/api/projects`, // ✅ updated
         {
-          headers: { Authorization: token } // keep consistent with backend
+          headers: { Authorization: token }
         }
       );
 
@@ -66,7 +68,7 @@ export default function Projects() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/projects",
+        `${API}/api/projects`, // ✅ updated
         { name: name.trim() },
         {
           headers: { Authorization: token }
@@ -97,7 +99,6 @@ export default function Projects() {
 
       <p><strong>Role:</strong> {user?.role}</p>
 
-      {/* Create Section */}
       <div style={{ marginBottom: "20px" }}>
         <input
           placeholder="Project Name"
@@ -117,7 +118,6 @@ export default function Projects() {
         </button>
       </div>
 
-      {/* Projects List */}
       <h3>Existing Projects</h3>
 
       {projects.length === 0 ? (

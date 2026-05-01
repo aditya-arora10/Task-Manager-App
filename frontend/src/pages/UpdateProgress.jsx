@@ -2,6 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL; // ✅ added
+
 export default function UpdateProgress() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ export default function UpdateProgress() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/tasks/progress/${id}`,
+        `${API}/api/tasks/progress/${id}`, // ✅ updated
         { progress },
         {
           headers: { Authorization: token }
@@ -48,7 +50,6 @@ export default function UpdateProgress() {
       <div className="card">
         <h2>Update Progress</h2>
 
-        {/* 🔥 PROGRESS INPUT */}
         <input
           type="number"
           placeholder="Enter progress (0-100%)"
@@ -58,7 +59,6 @@ export default function UpdateProgress() {
 
         <br /><br />
 
-        {/* 🔥 SIMPLE PROGRESS BAR PREVIEW */}
         <div style={{
           height: "10px",
           background: "#ddd",

@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL; // ✅ added
+
 export default function TaskDetails() {
   const { id } = useParams();
   const [task, setTask] = useState(null);
@@ -10,7 +12,7 @@ export default function TaskDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/tasks", {
+    axios.get(`${API}/api/tasks`, { // ✅ updated
       headers: { Authorization: token }
     }).then(res => {
       const found = res.data.find(t => t._id === id);
