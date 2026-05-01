@@ -4,23 +4,23 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
-
 // ✅ SIGNUP
 router.post("/signup", async (req, res) => {
   try {
     let { name, email, password, role, adminSecret, teamCode } = req.body;
 
-    // 🔥 TRIM INPUTS (IMPORTANT)
     name = name?.trim();
     email = email?.trim().toLowerCase();
     password = password?.trim();
 
     if (!name || !email || !password) {
-      return res.status(400).json("All fields are required");
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json("User already exists");
+    if (existing) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
 
@@ -31,7 +31,7 @@ router.post("/signup", async (req, res) => {
     // 👨‍💼 ADMIN
     if (userRole === "Admin") {
       if (adminSecret !== process.env.ADMIN_SECRET) {
-        return res.status(403).json("Invalid admin secret");
+        return res.status(403).json({ message: "Invalid admin secret" });
       }
 
       generatedTeamCode = crypto.randomBytes(3).toString("hex");
@@ -40,7 +40,7 @@ router.post("/signup", async (req, res) => {
     // 👤 MEMBER
     if (userRole === "Member") {
       if (!teamCode) {
-        return res.status(400).json("Team code is required");
+        return res.status(400).json({ message: "Team code is required" });
       }
 
       const admin = await User.findOne({
@@ -49,7 +49,7 @@ router.post("/signup", async (req, res) => {
       });
 
       if (!admin) {
-        return res.status(400).json("Invalid team code");
+        return res.status(400).json({ message: "Invalid team code" });
       }
 
       const count = await User.countDocuments({
@@ -57,7 +57,7 @@ router.post("/signup", async (req, res) => {
       });
 
       if (count >= 4) {
-        return res.status(400).json("Team full (max 4)");
+        return res.status(400).json({ message: "Team full (max 4)" });
       }
 
       createdBy = admin._id;
@@ -77,42 +77,32 @@ router.post("/signup", async (req, res) => {
 
   } catch (err) {
     console.log("❌ SIGNUP ERROR:", err);
-    res.status(500).json("Signup failed");
+    res.status(500).json({ message: "Signup failed" });
   }
 });
 
-
-// ✅ LOGIN (UPDATED + DEBUG)
+// ✅ LOGIN
 router.post("/login", async (req, res) => {
   try {
     let { email, password } = req.body;
 
-    // 🔥 TRIM INPUTS
     email = email?.trim().toLowerCase();
     password = password?.trim();
 
     if (!email || !password) {
-      return res.status(400).json("Email and password required");
+      return res.status(400).json({ message: "Email and password required" });
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("❌ USER NOT FOUND:", email);
-      return res.status(400).json("Invalid credentials");
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    console.log("LOGIN DEBUG:", {
-      email,
-      enteredPassword: password,
-      storedHash: user.password,
-      match: isMatch
-    });
-
     if (!isMatch) {
-      return res.status(400).json("Invalid credentials");
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
@@ -127,17 +117,18 @@ router.post("/login", async (req, res) => {
 
   } catch (err) {
     console.log("❌ LOGIN ERROR:", err);
-    res.status(500).json("Login failed");
+    res.status(500).json({ message: "Login failed" });
   }
 });
 
-// ⚠️ TEMP: DELETE ALL USERS (USE ONCE)
+// ⚠️ OPTIONAL CLEAR USERS
 router.get("/clear-users", async (req, res) => {
   try {
     await User.deleteMany({});
     res.send("All users deleted");
   } catch (err) {
-    res.status(500).json("Error deleting users");
+    res.status(500).json({ message: "Error deleting users" });
   }
 });
+
 module.exports = router;
