@@ -2,11 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+const crypto = require("crypto"); // ✅ FIX
+global.crypto = crypto; // ✅ FIX
 require("dotenv").config();
 
 const app = express();
 
-// ✅ CORS FIX (IMPORTANT)
+// ✅ CORS (allow Vercel frontend)
 app.use(cors({
   origin: "https://task-manager-app-zeta-rosy.vercel.app",
   credentials: true
@@ -14,10 +16,15 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ MongoDB
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("MongoDB Connected"))
-.catch(err=>console.log(err));
+// ✅ MongoDB (with better config)
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB Connected"))
+.catch(err => {
+  console.log("❌ Mongo Error:", err.message);
+});
 
 // ✅ TEST ROUTE
 app.get("/", (req, res) => {
@@ -48,12 +55,11 @@ app.get("/reset-all", async (req, res) => {
   }
 });
 
-// ✅ SERVE FRONTEND (optional if using Railway only backend)
-app.use(express.static(path.join(__dirname, "dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
+// ❌ REMOVE THIS (causes error in Railway)
+// app.use(express.static(path.join(__dirname, "dist")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
 
 // ✅ PORT FIX
 const PORT = process.env.PORT || 5000;

@@ -11,15 +11,17 @@
   "author": "Aditya Arora",
   "license": "ISC",
   "type": "commonjs",
+
   "engines": {
-    "node": ">=18"
+    "node": "18.x"
   },
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^4.22.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.6.1"
+    "mongoose": "^8.5.0"
   }
 }
