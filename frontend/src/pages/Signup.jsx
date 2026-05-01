@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL; // ✅ added
+const API = import.meta.env.VITE_API_URL;
 
 export default function Signup() {
   const [data, setData] = useState({
@@ -17,7 +17,7 @@ export default function Signup() {
   const signup = async () => {
     try {
       const res = await axios.post(
-        `${API}/api/auth/signup`, // ✅ updated
+        `${API}/api/auth/signup`,
         data
       );
 
@@ -30,7 +30,13 @@ export default function Signup() {
       window.location.href = "/";
 
     } catch (err) {
-      alert(err.response?.data || "Signup failed");
+      // ✅ FIXED ERROR MESSAGE
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Signup failed";
+
+      alert(typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg));
     }
   };
 
